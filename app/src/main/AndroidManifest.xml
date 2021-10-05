@@ -3,7 +3,25 @@
     package="com.example.bonjourtest">
 
     <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:required="true" />
+
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:required="true" />
+
+    <uses-permission
         android:name="android.permission.INTERNET"
+        android:required="true" />
+
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"
         android:required="true" />
 
     <application
@@ -14,7 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BonjourTest">
         <activity
-            android:name=".MainActivity"
+            android:name=".ConnectionActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".WiFiDirectActivity" />
     </application>
 
 </manifest>

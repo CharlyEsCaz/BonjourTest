@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import android.widget.Toast
 import java.net.InetAddress
 import java.net.ServerSocket
 
@@ -21,12 +20,25 @@ class BonjourSettings(
     private var SERVICE_TYPE = "_offline_test._udp"
     private var serverSocket: ServerSocket? = null
     private var mLocalPort = 0
+//    private val multicastLock: WifiManager.MulticastLock =
+//        (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager).createMulticastLock(
+//            "mylock"
+//        )
 
-    fun initializeServerSocket(){
+
+    fun initializeServerSocket() {
+
+//        multicastLock.setReferenceCounted(true)
+//        multicastLock.acquire()
+
         serverSocket = ServerSocket(0).also { socket ->
             mLocalPort = socket.localPort
             Log.d(TAG, "Port: $mLocalPort")
             registerService(mLocalPort)
+
+//            multicastLock.setReferenceCounted(true)
+//            multicastLock.acquire()
+
             nsdManager?.discoverServices(
                 SERVICE_TYPE,
                 NsdManager.PROTOCOL_DNS_SD,
@@ -82,11 +94,13 @@ class BonjourSettings(
         override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
             Log.e(TAG, "Discovery failed: Error code:$errorCode")
             nsdManager?.stopServiceDiscovery(this)
+            //multicastLock.release()
         }
 
         override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
             Log.e(TAG, "Discovery failed: Error code:$errorCode")
             nsdManager?.stopServiceDiscovery(this)
+            //multicastLock.release()
         }
     }
 
@@ -94,10 +108,11 @@ class BonjourSettings(
 
         override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
             mServiceName = NsdServiceInfo.serviceName
+            Log.d(TAG, "Service registration success")
         }
 
         override fun onRegistrationFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
-
+            Log.d(TAG, "Service registration failed: $errorCode")
         }
 
         override fun onServiceUnregistered(arg0: NsdServiceInfo) {
@@ -133,6 +148,7 @@ class BonjourSettings(
         nsdManager?.apply {
             unregisterService(registrationListener)
             stopServiceDiscovery(discoveryListener)
+            //multicastLock.release()
         }
     }
 
